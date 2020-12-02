@@ -10,23 +10,48 @@ namespace WiredBrainCoffee.CupOrderAdmin.Core.Tests.Services.OrderCreation
     [TestClass]
     public class OrderCreationServiceTest
     {
-        [TestMethod]
-        public async  Task ShouldStoreCreatedOrderInORderCreateionResult()
+        private OrderCreationService _orderCreationService;
+        private int _numberOfCupsInStock;
+
+        [TestInitialize]
+        public void TestInitialize()
         {
+            
+
             var orderRepositoryMock = new Mock<IOrderRepository>();
             orderRepositoryMock.Setup(x => x.SaveAsync(It.IsAny<Order>())).ReturnsAsync((Order x) => x);
             var coffeCupRepositoryMock = new Mock<ICoffeeCupRepository>();
 
-            var orderCreationService = new OrderCreationService(orderRepositoryMock.Object, coffeCupRepositoryMock.Object);
+            _numberOfCupsInStock = 10;
+            coffeCupRepositoryMock.Setup(x => x.GetCoffeeCupsInStockCountAsync()).ReturnsAsync(_numberOfCupsInStock);
 
+            _orderCreationService = new OrderCreationService(orderRepositoryMock.Object, coffeCupRepositoryMock.Object);
+        }
+
+        [TestMethod]
+        public async  Task ShouldStoreCreatedOrderInORderCreateionResult()
+        {
             var numberOfOrderedCups = 1;
             var customer = new Customer() {Id = 99};
 
-            var orderCreationResult = await orderCreationService.CreateOrderAsync(customer, numberOfOrderedCups);
+            var orderCreationResult = await _orderCreationService.CreateOrderAsync(customer, numberOfOrderedCups);
 
             Assert.AreEqual(OrderCreationResultCode.Success, orderCreationResult.ResultCode);
             Assert.IsNotNull(orderCreationResult.CreatedOrder);
             Assert.AreEqual(customer.Id, orderCreationResult.CreatedOrder.CustomerId);
+        }
+
+        [TestMethod]
+        public async Task ShouldStoreRemainingCupsInStockInOrderCreationResult()
+        {
+            var numberOfOrderedCups = 3;
+            var expectedRemainingCupsInStock = _numberOfCupsInStock - numberOfOrderedCups;
+            var customer = new Customer();
+
+            var orderCreationResult = await _orderCreationService.CreateOrderAsync(customer, numberOfOrderedCups);
+
+            Assert.AreEqual(OrderCreationResultCode.Success, orderCreationResult.ResultCode);
+            Assert.AreEqual(expectedRemainingCupsInStock, orderCreationResult.RemainingCupsInStock);
         }
     }
 }
