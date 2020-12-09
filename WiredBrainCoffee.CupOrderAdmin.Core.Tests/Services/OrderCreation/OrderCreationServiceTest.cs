@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System.Threading.Tasks;
 using WiredBrainCoffee.CupOrderAdmin.Core.DataInterfaces;
@@ -52,6 +53,42 @@ namespace WiredBrainCoffee.CupOrderAdmin.Core.Tests.Services.OrderCreation
 
             Assert.AreEqual(OrderCreationResultCode.Success, orderCreationResult.ResultCode);
             Assert.AreEqual(expectedRemainingCupsInStock, orderCreationResult.RemainingCupsInStock);
+        }
+
+        [TestMethod]
+        public async void ShouldReturnStockExceededResultIfNotEnoughtCupsInStock()
+        {
+            var numberOfOrderedCups = _numberOfCupsInStock + 1;
+            var customer = new Customer();
+
+            var orderCreationResult = await _orderCreationService.CreateOrderAsync(customer, numberOfOrderedCups);
+
+            Assert.AreEqual(OrderCreationResultCode.StockExceeded, orderCreationResult.ResultCode);
+            Assert.AreEqual(_numberOfCupsInStock, orderCreationResult.RemainingCupsInStock);
+        }
+
+        [TestMethod]
+        public async void ShouldThrowExceptionIfNumberOfOrderedCupsIsLessThenOne()
+        {
+            var numberOfOrderedCups = 0;
+            var customer = new Customer();
+
+            var exception = await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(() =>
+                _orderCreationService.CreateOrderAsync(customer, numberOfOrderedCups));
+
+            Assert.AreEqual("numberOfOrderedCups", exception.ParamName);
+        }
+
+        [TestMethod]
+        public async void ShouldThrowExceptionIfCustomerIsNull()
+        {
+            var numberOfOrderedCups = 1;
+            Customer customer = null;
+
+            var exception = await Assert.ThrowsExceptionAsync<ArgumentNullException>(
+                () => _orderCreationService.CreateOrderAsync(customer, numberOfOrderedCups));
+
+            Assert.AreEqual("customer", exception.ParamName);
         }
     }
 }

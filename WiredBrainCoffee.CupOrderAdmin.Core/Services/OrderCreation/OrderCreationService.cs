@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using WiredBrainCoffee.CupOrderAdmin.Core.DataInterfaces;
 using WiredBrainCoffee.CupOrderAdmin.Core.Model;
@@ -23,24 +24,42 @@ namespace WiredBrainCoffee.CupOrderAdmin.Core.Services.OrderCreation
     public async Task<OrderCreationResult> CreateOrderAsync(Customer customer,
       int numberOfOrderedCups)
     {
-      // TODO: Throw ArgumentOutOfRangeException if number of ordered cups is less than 1
+        if (customer == null)
+        {
+            throw new ArgumentNullException(nameof(customer));
+        }
 
-      OrderCreationResult result;
+        if (numberOfOrderedCups < 1)
+        {
+            throw new ArgumentOutOfRangeException(nameof(numberOfOrderedCups), $"{nameof(numberOfOrderedCups)} must bue greater then zero");
+        }
 
-      var numberOfCupsInStock = await _coffeeCupRepository.GetCoffeeCupsInStockCountAsync();
+        OrderCreationResult result;
 
-      // TODO: Return StockExceeded result code if not enough cups in stock
+        var numberOfCupsInStock = await _coffeeCupRepository.GetCoffeeCupsInStockCountAsync();
 
-      Order createdOrder = await CreateOrderInternalAsync(customer, numberOfOrderedCups);
+        var areEnoughtCupsInStock = numberOfOrderedCups <= numberOfCupsInStock;
+        if (areEnoughtCupsInStock)
+        {
+            Order createdOrder = await CreateOrderInternalAsync(customer, numberOfOrderedCups);
 
-      result = new OrderCreationResult
-      {
-        ResultCode = OrderCreationResultCode.Success,
-        CreatedOrder = createdOrder,
-        RemainingCupsInStock = numberOfCupsInStock - numberOfOrderedCups
-      };
+            result = new OrderCreationResult
+            {
+                ResultCode = OrderCreationResultCode.Success,
+                CreatedOrder = createdOrder,
+                RemainingCupsInStock = numberOfCupsInStock - numberOfOrderedCups
+            };
+        }
+        else
+        {
+            result = new OrderCreationResult
+            {
+                ResultCode = OrderCreationResultCode.StockExceeded,
+                RemainingCupsInStock = numberOfCupsInStock
+            };
+        }
 
-      return result;
+        return result;
     }
 
     private static double CalculateDiscountPercentage(CustomerMembership membership,
