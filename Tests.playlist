@@ -1,0 +1,54 @@
+<Playlist Version="2.0">
+  <Rule Name="Includes" Match="Any">
+    <Rule Match="All">
+      <Property Name="Solution" />
+      <Rule Match="Any">
+        <Rule Match="All">
+          <Property Name="Project" Value="WiredBrainCoffee.CupOrderAdmin.Core.Tests" />
+          <Rule Match="Any">
+            <Rule Match="All">
+              <Property Name="Namespace" Value="WiredBrainCoffee.CupOrderAdmin.Core.Tests.Services.OrderCreation" />
+              <Rule Match="Any">
+                <Rule Match="All">
+                  <Property Name="Class" Value="OrderCreationServiceTest" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="WiredBrainCoffee.CupOrderAdmin.Core.Tests.Services.OrderCreation.OrderCreationServiceTest.ShouldReturnStockExceededResultIfNotEnoughtCupsInStock" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ShouldReturnStockExceededResultIfNotEnoughtCupsInStock" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="WiredBrainCoffee.CupOrderAdmin.Core.Tests.Services.OrderCreation.OrderCreationServiceTest.ShouldStoreCreatedOrderInORderCreateionResult" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ShouldStoreCreatedOrderInORderCreateionResult" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="WiredBrainCoffee.CupOrderAdmin.Core.Tests.Services.OrderCreation.OrderCreationServiceTest.ShouldStoreRemainingCupsInStockInOrderCreationResult" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ShouldStoreRemainingCupsInStockInOrderCreationResult" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="WiredBrainCoffee.CupOrderAdmin.Core.Tests.Services.OrderCreation.OrderCreationServiceTest.ShouldThrowExceptionIfCustomerIsNull" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ShouldThrowExceptionIfCustomerIsNull" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="WiredBrainCoffee.CupOrderAdmin.Core.Tests.Services.OrderCreation.OrderCreationServiceTest.ShouldThrowExceptionIfNumberOfOrderedCupsIsLessThenOne" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ShouldThrowExceptionIfNumberOfOrderedCupsIsLessThenOne" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+              </Rule>
+            </Rule>
+          </Rule>
+        </Rule>
+      </Rule>
+    </Rule>
+  </Rule>
+</Playlist>
