@@ -1,4 +1,4 @@
-# System.Threading.Thread
+# Testing .NET Code in Visual Studio 2019
 ### by Thomas Claudius Huber
 
 #### Visual Studio 2019 has great support and new features for unit tests. This course will show you how to write and run unit tests in Visual Studio 2019 helping you write rock-solid applications.
