@@ -92,16 +92,17 @@ namespace WiredBrainCoffee.CupOrderAdmin.Core.Tests.Services.OrderCreation
             Assert.AreEqual("customer", exception.ParamName);
         }
 
-        [TestMethod]
-        public async void ShouldCalculateCorrectDiscountPercentage()
+        [DataTestMethod]
+        [DataRow(3,5)]
+        [DataRow(0,4)]
+        public async void ShouldCalculateCorrectDiscountPercentage(double expectedDiscountInPercent, int numberOfOrderCups)
         {
-            var numberOfOrderCups = 5;
             var customer = new Customer {Membership = CustomerMembership.Basic};
 
             var orderCreationResult = await _orderCreationService.CreateOrderAsync(customer, numberOfOrderCups);
 
             Assert.AreEqual(OrderCreationResultCode.Success, orderCreationResult.ResultCode);
-            Assert.AreEqual(3, orderCreationResult.CreatedOrder.DiscountInPercent);
+            Assert.AreEqual(expectedDiscountInPercent, orderCreationResult.CreatedOrder.DiscountInPercent);
         }
     }
 }
