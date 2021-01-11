@@ -97,7 +97,7 @@ namespace WiredBrainCoffee.CupOrderAdmin.Core.Tests.Services.OrderCreation
         [DataRow(0,4, CustomerMembership.Basic)]
         [DataRow(8,5, CustomerMembership.Premium)]
         [DataRow(5,4, CustomerMembership.Premium)]
-        public async void ShouldCalculateCorrectDiscountPercentage(double expectedDiscountInPercent, int numberOfOrderCups, CustomerMembership customerMembership)
+        public async Task ShouldCalculateCorrectDiscountPercentage(double expectedDiscountInPercent, int numberOfOrderCups, CustomerMembership customerMembership)
         {
             var customer = new Customer {Membership = customerMembership};
 
@@ -105,6 +105,18 @@ namespace WiredBrainCoffee.CupOrderAdmin.Core.Tests.Services.OrderCreation
 
             Assert.AreEqual(OrderCreationResultCode.Success, orderCreationResult.ResultCode);
             Assert.AreEqual(expectedDiscountInPercent, orderCreationResult.CreatedOrder.DiscountInPercent);
+        }
+
+        [DataTestMethod]
+        [DataRow(3,5, CustomerMembership.Basic)]
+        [DataRow(0,4, CustomerMembership.Basic)]
+        [DataRow(8,5, CustomerMembership.Premium)]
+        [DataRow(5,4, CustomerMembership.Premium)]
+        public void ShouldCalculateCorrectDiscountPercentage2(double expectedDiscountInPercent, int numberOfOrderCups, CustomerMembership customerMembership)
+        {
+            var discountInPercent =
+                OrderCreationService.CalculateDiscountPercentage(customerMembership, numberOfOrderCups);
+            Assert.AreEqual(expectedDiscountInPercent, discountInPercent);
         }
     }
 }
