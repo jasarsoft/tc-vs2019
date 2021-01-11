@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Threading.Tasks;
 using WiredBrainCoffee.CupOrderAdmin.Core.DataInterfaces;
 using WiredBrainCoffee.CupOrderAdmin.Core.Model;
@@ -7,7 +6,7 @@ using WiredBrainCoffee.CupOrderAdmin.Core.Model.Enums;
 
 namespace WiredBrainCoffee.CupOrderAdmin.Core.Services.OrderCreation
 {
-  public class OrderCreationService : IOrderCreationService
+    public class OrderCreationService : IOrderCreationService
   {
     private readonly IOrderRepository _orderRepository;
     private readonly ICoffeeCupRepository _coffeeCupRepository;
@@ -67,12 +66,15 @@ namespace WiredBrainCoffee.CupOrderAdmin.Core.Services.OrderCreation
     {
       var discountInPercent = 0.0;
 
-      // TODO: Calculate discount in percent
-      //
-      //       Rules:
-      //       3% for more than 4 cups
-      //      
-      //       Premium customers get 5% in addition
+      if (numberOfOrderedCups > 4)
+      {
+          discountInPercent = 3;
+      }
+
+      if (membership == CustomerMembership.Premium)
+      {
+          discountInPercent += 5;
+      }
 
       return discountInPercent;
     }
