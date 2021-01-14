@@ -1,6 +1,6 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
+﻿using Moq;
+using NUnit.Framework;
+using System;
 using System.Threading.Tasks;
 using WiredBrainCoffee.CupOrderAdmin.Core.DataInterfaces;
 using WiredBrainCoffee.CupOrderAdmin.Core.Model;
@@ -9,13 +9,13 @@ using WiredBrainCoffee.CupOrderAdmin.Core.Services.OrderCreation;
 
 namespace WiredBrainCoffee.CupOrderAdmin.Core.Tests.Services.OrderCreation
 {
-    [TestClass]
+    [TestFixture]
     public class OrderCreationServiceTest
     {
         private OrderCreationService _orderCreationService;
         private int _numberOfCupsInStock;
 
-        [TestInitialize]
+        [SetUp]
         public void TestInitialize()
         {
             
@@ -30,7 +30,7 @@ namespace WiredBrainCoffee.CupOrderAdmin.Core.Tests.Services.OrderCreation
             _orderCreationService = new OrderCreationService(orderRepositoryMock.Object, coffeCupRepositoryMock.Object);
         }
 
-        [TestMethod]
+        [Test]
         public async  Task ShouldStoreCreatedOrderInORderCreateionResult()
         {
             var numberOfOrderedCups = 1;
@@ -43,7 +43,7 @@ namespace WiredBrainCoffee.CupOrderAdmin.Core.Tests.Services.OrderCreation
             Assert.AreEqual(customer.Id, orderCreationResult.CreatedOrder.CustomerId);
         }
 
-        [TestMethod]
+        [Test]
         public async Task ShouldStoreRemainingCupsInStockInOrderCreationResult()
         {
             var numberOfOrderedCups = 3;
@@ -56,7 +56,7 @@ namespace WiredBrainCoffee.CupOrderAdmin.Core.Tests.Services.OrderCreation
             Assert.AreEqual(expectedRemainingCupsInStock, orderCreationResult.RemainingCupsInStock);
         }
 
-        [TestMethod]
+        [Test]
         public async void ShouldReturnStockExceededResultIfNotEnoughtCupsInStock()
         {
             var numberOfOrderedCups = _numberOfCupsInStock + 1;
@@ -68,35 +68,33 @@ namespace WiredBrainCoffee.CupOrderAdmin.Core.Tests.Services.OrderCreation
             Assert.AreEqual(_numberOfCupsInStock, orderCreationResult.RemainingCupsInStock);
         }
 
-        [TestMethod]
-        public async void ShouldThrowExceptionIfNumberOfOrderedCupsIsLessThenOne()
+        [Test]
+        public void ShouldThrowExceptionIfNumberOfOrderedCupsIsLessThenOne()
         {
             var numberOfOrderedCups = 0;
             var customer = new Customer();
 
-            var exception = await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(() =>
+            var exception = Assert.ThrowsAsync<ArgumentOutOfRangeException>(() =>
                 _orderCreationService.CreateOrderAsync(customer, numberOfOrderedCups));
 
             Assert.AreEqual("numberOfOrderedCups", exception.ParamName);
         }
-
-        [TestMethod]
-        public async void ShouldThrowExceptionIfCustomerIsNull()
+        [Test]
+        public void ShouldThrowExceptionIfCustomerIsNull()
         {
             var numberOfOrderedCups = 1;
             Customer customer = null;
 
-            var exception = await Assert.ThrowsExceptionAsync<ArgumentNullException>(
+            var exception = Assert.ThrowsAsync<ArgumentNullException>(
                 () => _orderCreationService.CreateOrderAsync(customer, numberOfOrderedCups));
 
             Assert.AreEqual("customer", exception.ParamName);
         }
 
-        [DataTestMethod]
-        [DataRow(3,5, CustomerMembership.Basic)]
-        [DataRow(0,4, CustomerMembership.Basic)]
-        [DataRow(8,5, CustomerMembership.Premium)]
-        [DataRow(5,4, CustomerMembership.Premium)]
+        [TestCase(3,5, CustomerMembership.Basic)]
+        [TestCase(0,4, CustomerMembership.Basic)]
+        [TestCase(8,5, CustomerMembership.Premium)]
+        [TestCase(5,4, CustomerMembership.Premium)]
         public async Task ShouldCalculateCorrectDiscountPercentage(double expectedDiscountInPercent, int numberOfOrderCups, CustomerMembership customerMembership)
         {
             var customer = new Customer {Membership = customerMembership};
@@ -107,18 +105,17 @@ namespace WiredBrainCoffee.CupOrderAdmin.Core.Tests.Services.OrderCreation
             Assert.AreEqual(expectedDiscountInPercent, orderCreationResult.CreatedOrder.DiscountInPercent);
         }
 
-        [DataTestMethod]
-        [DataRow(3,5, CustomerMembership.Basic)]
-        [DataRow(0,4, CustomerMembership.Basic)]
-        [DataRow(0,1, CustomerMembership.Basic)]
-        [DataRow(8,5, CustomerMembership.Premium)]
-        [DataRow(5,4, CustomerMembership.Premium)]
-        [DataRow(5,1, CustomerMembership.Premium)]
+        [TestCase(3,5, CustomerMembership.Basic)]
+        [TestCase(0,4, CustomerMembership.Basic)]
+        [TestCase(0,1, CustomerMembership.Basic)]
+        [TestCase(8,5, CustomerMembership.Premium)]
+        [TestCase(5,4, CustomerMembership.Premium)]
+        [TestCase(5,1, CustomerMembership.Premium)]
         public void ShouldCalculateCorrectDiscountPercentage2(double expectedDiscountInPercent, int numberOfOrderCups, CustomerMembership customerMembership)
         {
             var discountInPercent =
                 OrderCreationService.CalculateDiscountPercentage(customerMembership, numberOfOrderCups);
             Assert.AreEqual(expectedDiscountInPercent, discountInPercent);
         }
-    }
+     }
 }
