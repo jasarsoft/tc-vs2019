@@ -1,5 +1,6 @@
 ﻿using Moq;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using WiredBrainCoffee.CupOrderAdmin.Core.DataInterfaces;
 using WiredBrainCoffee.CupOrderAdmin.Core.Model;
@@ -16,14 +17,14 @@ namespace WiredBrainCoffee.CupOrderAdmin.Core.Tests.Services.OrderCreation
 
         public OrderCreationServiceTest()
         {
-            
-
             var orderRepositoryMock = new Mock<IOrderRepository>();
             orderRepositoryMock.Setup(x => x.SaveAsync(It.IsAny<Order>())).ReturnsAsync((Order x) => x);
             var coffeCupRepositoryMock = new Mock<ICoffeeCupRepository>();
 
             _numberOfCupsInStock = 10;
             coffeCupRepositoryMock.Setup(x => x.GetCoffeeCupsInStockCountAsync()).ReturnsAsync(_numberOfCupsInStock);
+            coffeCupRepositoryMock.Setup(x => x.GetCoffeeCupsInStockAsync(It.IsAny<int>())).ReturnsAsync(
+                (int numberOfOrderedCups) => Enumerable.Range(1, numberOfOrderedCups).Select(p => new CoffeeCup()));
 
             _orderCreationService = new OrderCreationService(orderRepositoryMock.Object, coffeCupRepositoryMock.Object);
         }
@@ -116,6 +117,25 @@ namespace WiredBrainCoffee.CupOrderAdmin.Core.Tests.Services.OrderCreation
             var discountInPercent =
                 OrderCreationService.CalculateDiscountPercentage(customerMembership, numberOfOrderCups);
             Assert.Equal(expectedDiscountInPercent, discountInPercent);
+        }
+
+        [Fact]
+        public void ShouldThrowArgumentNullExceptionIfOrderRepositoryIsNull()
+        {
+            var exception =
+                Assert.Throws<ArgumentNullException>(
+                    () => new OrderCreationService(null, new Mock<ICoffeeCupRepository>().Object));
+
+            Assert.Equal("orderRepository", exception.ParamName);
+        }
+
+        [Fact]
+        public void ShouldThrowArgumentNullExceptionIfCoffeCupRepositoryIsNull()
+        {
+            var exception = Assert.Throws<ArgumentNullException>(() =>
+                new OrderCreationService(new Mock<IOrderRepository>().Object, null));
+
+            Assert.Equal("coffeeCupRepository", exception.ParamName);
         }
      }
 }
