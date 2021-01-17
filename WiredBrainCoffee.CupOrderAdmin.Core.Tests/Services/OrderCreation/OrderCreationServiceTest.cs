@@ -108,9 +108,13 @@ namespace WiredBrainCoffee.CupOrderAdmin.Core.Tests.Services.OrderCreation
         }
 
         [Theory]
+        [InlineData(5,10, CustomerMembership.Basic)]
+        [InlineData(3,9, CustomerMembership.Basic)]
         [InlineData(3,5, CustomerMembership.Basic)]
         [InlineData(0,4, CustomerMembership.Basic)]
         [InlineData(0,1, CustomerMembership.Basic)]
+        [InlineData(10,10, CustomerMembership.Premium)]
+        [InlineData(8,9, CustomerMembership.Premium)]
         [InlineData(8,5, CustomerMembership.Premium)]
         [InlineData(5,4, CustomerMembership.Premium)]
         [InlineData(5,1, CustomerMembership.Premium)]

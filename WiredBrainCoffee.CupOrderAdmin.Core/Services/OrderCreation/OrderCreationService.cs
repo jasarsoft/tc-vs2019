@@ -66,7 +66,11 @@ namespace WiredBrainCoffee.CupOrderAdmin.Core.Services.OrderCreation
     {
       var discountInPercent = 0.0;
 
-      if (numberOfOrderedCups > 4)
+      if (numberOfOrderedCups > 9)
+      {
+          discountInPercent = 5;
+      }
+      else if (numberOfOrderedCups > 4)
       {
           discountInPercent = 3;
       }
