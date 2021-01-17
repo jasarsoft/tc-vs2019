@@ -1,5 +1,6 @@
 ﻿using Moq;
 using System;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
@@ -80,6 +81,8 @@ namespace WiredBrainCoffee.CupOrderAdmin.Core.Tests.Services.OrderCreation
 
             Assert.Equal("numberOfOrderedCups", exception.ParamName);
         }
+
+        [Trait("Category", "SkipWhenLiveUnitTesting")]
         [Fact]
         public async void ShouldThrowExceptionIfCustomerIsNull()
         {
